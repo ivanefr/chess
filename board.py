@@ -1,6 +1,5 @@
 import chess
 import chess.svg
-import pygame
 from config import *
 import cairosvg
 

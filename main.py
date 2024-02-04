@@ -1,4 +1,3 @@
-import pygame
 from config import *
 import sys
 from button import Button
@@ -90,7 +89,7 @@ class Chess:
             self.clock.tick()
             Chess.check_exit()
             for event in pygame.event.get():
-                if event.type in (pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP):
+                if event.type == pygame.MOUSEBUTTONDOWN:
                     x, y = pygame.mouse.get_pos()
                     r = self.board.click(x, y)
                     if r == CHECKMATE:
