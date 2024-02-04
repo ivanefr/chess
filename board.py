@@ -18,7 +18,9 @@ class Board:
         self.is_clicked = None
         self.legal_move = []
 
-        self.move_color = 1
+        self.move_color = True
+
+        self.checkmate = False
 
     def __str__(self):
         return str(self.board)
@@ -26,6 +28,15 @@ class Board:
     def move(self, square_from, square_to):
         m = chess.Move(square_from, square_to)
         self.board.push(m)
+        self.move_color = not self.move_color
+        if self.board.is_checkmate():
+            self.draw_checkmate()
+            self.checkmate = True
+            return
+        if self.board.is_check():
+            self.draw_check()
+        else:
+            self.del_check()
 
     def draw_piece(self, x, y):
         piece = self.board.piece_at(Board.square(x, y))
@@ -78,12 +89,13 @@ class Board:
         x = int(x)
         if (x, y) in self.legal_move:
             self.move(Board.square(*self.is_clicked), Board.square(x, y))
-            self.move_color = not self.move_color
             self.draw_cell(*self.is_clicked)
             for legal_x, legal_y in self.legal_move:
                 self.draw_cell(legal_x, legal_y)
             self.is_clicked = None
             self.legal_move = []
+            if self.checkmate:
+                return CHECKMATE
             return
         piece = self.board.piece_at(Board.square(x, y))
         if piece is not None and piece.color == self.move_color:
@@ -112,8 +124,27 @@ class Board:
                 for legal_x, legal_y in self.legal_move:
                     self.draw_cell(legal_x, legal_y)
                 self.legal_move = []
-        # if self.board.is_check():
-        #     self.draw_check()
+
+    def draw_check(self):
+        square = self.board.king(self.move_color)
+        x, y = Board.coor_by_square(square)
+        self.draw_cell(x, y, RED_CELL)
+
+    def del_check(self):
+        square = self.board.king(not self.move_color)
+        x, y = Board.coor_by_square(square)
+        self.draw_cell(x, y)
+
+    def draw_checkmate(self):
+        square = self.board.king(self.move_color)
+        x, y = Board.coor_by_square(square)
+        self.draw_cell(x, y, PURPLE_CELL)
+
+    @staticmethod
+    def coor_by_square(square):
+        y = square // 8
+        x = square % 8
+        return x, y
 
     def draw_legal_move(self, x, y):
         piece = self.board.piece_at(Board.square(x, 7 - y))

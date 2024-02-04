@@ -6,6 +6,10 @@ WHITE = (255, 255, 255)
 WHITE_CELL = (240, 217, 181)
 BLACK_CELL = (181, 136, 99)
 GREEN_CELL = (0, 255, 0)
+RED_CELL = (255, 0, 0)
+PURPLE_CELL = (128, 0, 128)
+
+CHECKMATE = 2
 
 
 def load_image(name):
