@@ -21,12 +21,15 @@ class Board:
 
         self.checkmate = False
 
+        self.last_move = None
+
     def __str__(self):
         return str(self.board)
 
     def move(self, square_from, square_to):
         m = chess.Move(square_from, square_to)
         self.board.push(m)
+        self.draw_last_move(square_from, square_to)
         self.move_color = not self.move_color
         if self.board.is_checkmate():
             self.draw_checkmate()
@@ -87,10 +90,10 @@ class Board:
         y = int(7 - y)
         x = int(x)
         if (x, y) in self.legal_move:
-            self.move(Board.square(*self.is_clicked), Board.square(x, y))
-            self.draw_cell(*self.is_clicked)
+            # self.draw_cell(*self.is_clicked)
             for legal_x, legal_y in self.legal_move:
                 self.draw_cell(legal_x, legal_y)
+            self.move(Board.square(*self.is_clicked), Board.square(x, y))
             self.is_clicked = None
             self.legal_move = []
             if self.checkmate:
@@ -160,4 +163,13 @@ class Board:
                                    (x + 0.5) * self.BLOCK_WIDTH,
                                    (y + 0.5) * self.BLOCK_HEIGHT
                                ),
-                               0.1 * self.BLOCK_HEIGHT)
+                               0.13 * self.BLOCK_HEIGHT)
+
+    def draw_last_move(self, square_from, square_to):
+        if self.last_move is not None:
+            for square in self.last_move:
+                self.draw_cell(*Board.coor_by_square(square))
+        for square in (square_from, square_to):
+            x, y = Board.coor_by_square(square)
+            self.draw_cell(x, y, LAST_MOVE_CELL)
+        self.last_move = (square_from, square_to)
